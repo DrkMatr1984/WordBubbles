@@ -1,0 +1,38 @@
+name: WordBubbles
+main: me.drkmatr1984.wordbubbles.WordClass
+version: 0.1
+author: drkmatr1984
+depend: [HolographicDisplays, ProtocolLib]
+softdepend: [PlaceholderAPI, dsTitle, SkillAPI, MarriageMaster, Citizens]
+description: Create Word Bubbles when NPCs and Players Talk!
+commands:
+  Wordbubbles:
+    description: Wordbubbles main command
+    aliases: [wb, wordb, wbubbles, wordbubble]
+    usage: |
+        /Wordbubbles - Displays this Help
+  WordBubbles help:
+    description: Wordbubbles help command
+    usage: |
+        /Wordbubbles help - Also Displays this Help
+  WordBubbles toggle:
+    description: Toggle WordBubbles On/Off for yourself
+    usage: |
+        /Wordbubbles toggle - Toggles WordBubbles On/Off for Yourself
+  Trait WordBubbles:
+    description: Allow NPC to Speak with WordBubbles 
+    usage: |
+        /Trait wordbubbles - Allow NPC to Speak with WordBubbles 
+permissions:
+    Wordbubbles.use:
+        description: The player will generate wordbubbles and can use WordBubbles Commmands
+        default: op
+    Wordbubbles.color:
+        description: Allows the user to use colors in WordBubbles
+        default: op
+    Wordbubbles.trait:
+        description: Shows the help regarding /trait wordbubbles
+        default: op
+    Wordbubbles.admin:
+        description: Allows the user to use the reload and version commands,see /trait help, and use colors in WordBubbles
+        default: op
