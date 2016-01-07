@@ -11,7 +11,8 @@ import org.bukkit.entity.Player;
 
 public class WordBubblesAPI
 {
-  static WordClass c = WordClass.plugin;
+  static WordMain b = WordMain.plugin;
+  static WordBubbles c = new WordBubbles();
   
   public static void createWordBubbleAPI(Player p, String Header, List<String> Msg) {
     c.createWordBubble(p, Header, Msg);
@@ -79,5 +80,13 @@ public class WordBubblesAPI
   public static void createWordBubbleAPI(NPC p, String Msg)
   {
     c.createWordBubble((LivingEntity) p.getEntity(), "", Arrays.asList(new String[] { Msg }));
+  }
+  
+  public boolean wordsIsToggled(Player player)
+  {
+	  if(b.wordconfig.disabledPlayers.contains(player)){
+		  return false;
+	  }
+	  return true;
   }
 }

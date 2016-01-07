@@ -6,18 +6,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+
 public class WordCommandExecutor implements org.bukkit.command.CommandExecutor
 {	
-	private WordClass plugin;
-	
-	public WordCommandExecutor(WordClass plugin) {
-		this.plugin = plugin;
-	}
+	WordMain word = WordMain.getWordClass();
+	String perm = this.word.wordconfig.PLPrefix + " §cYou don't have Permission";
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-	  {
-	    String perm = plugin.wordconfig.PLPrefix + " §cYou don't have Permission";
+	  {    
 	    try {
 	      if (cmd.getName().equalsIgnoreCase("wordbubbles")) {
 	        if ((args.length == 0) || (args.equals(null)))
@@ -26,22 +25,7 @@ public class WordCommandExecutor implements org.bukkit.command.CommandExecutor
 	            sender.sendMessage(perm);
 	            return true;
 	          }
-	          sender.sendMessage(ChatColor.BLUE + "------  " + ChatColor.YELLOW + plugin.wordconfig.PLPrefix + " Help  " + ChatColor.BLUE + "------" + ChatColor.RESET);
-	          sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles" + " " + ChatColor.RESET + "- Displays this Help");
-	          sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles help" + " " + ChatColor.RESET + "- Also Displays this Help");
-	          sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles toggle" + " " + ChatColor.RESET + "- Toggle your wordbubbles " + ChatColor.GREEN + "On" + ChatColor.RESET + "/" + ChatColor.RED + "Off" + ChatColor.RESET);
-	          if(WordClass.cit && (sender.hasPermission("Wordbubbles.trait") || sender.hasPermission("Wordbubbles.admin"))){
-	        	sender.sendMessage(ChatColor.DARK_AQUA + "-----------------" + ChatColor.RESET);
-	        	sender.sendMessage(ChatColor.YELLOW + "/Trait wordbubbles " + ChatColor.RESET + "- Typing this while");
-	            sender.sendMessage("looking at a Citizens2 NPC will allow");
-	            sender.sendMessage("the NPC to speak in wordbubbles");
-	          }
-	          if (sender.hasPermission("Wordbubbles.admin")) {
-	        	sender.sendMessage(ChatColor.YELLOW + "-----------------" + ChatColor.RESET);
-	            sender.sendMessage("§c/" + "WordBubbles" + " version§r - Shows the Plugin Version Number");
-	            sender.sendMessage("§c/" + "WordBubbles" + " reload§r - Reloads the Plugin Config");
-	          }
-	          sender.sendMessage(ChatColor.BLUE + "---------------------------------" + ChatColor.RESET);
+	          displayHelp(sender);
 	          return true;
 	        }
 	        
@@ -52,22 +36,7 @@ public class WordCommandExecutor implements org.bukkit.command.CommandExecutor
 	              sender.sendMessage(perm);
 	              return true;
 	            }
-	            sender.sendMessage(ChatColor.BLUE + "------  " + ChatColor.YELLOW + plugin.wordconfig.PLPrefix + " Help  " + ChatColor.BLUE + "------" + ChatColor.RESET);
-	            sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles" + " " + ChatColor.RESET + "- Displays this Help");
-	            sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles help" + " " + ChatColor.RESET + "- Also Displays this Help");
-	            sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles toggle" + " " + ChatColor.RESET + "- Toggle your wordbubbles " + ChatColor.GREEN + "On" + ChatColor.RESET + "/" + ChatColor.RED + "Off" + ChatColor.RESET);
-	            if(WordClass.cit && (sender.hasPermission("Wordbubbles.trait") || sender.hasPermission("Wordbubbles.admin"))){
-	          	sender.sendMessage(ChatColor.DARK_AQUA + "-----------------" + ChatColor.RESET);
-	          	sender.sendMessage(ChatColor.YELLOW + "/Trait wordbubbles " + ChatColor.RESET + "- Typing this while");
-	              sender.sendMessage("looking at a Citizens2 NPC will allow");
-	              sender.sendMessage("the NPC to speak in wordbubbles");
-	            }
-	            if (sender.hasPermission("Wordbubbles.admin")) {
-	          	sender.sendMessage(ChatColor.YELLOW + "-----------------" + ChatColor.RESET);
-	              sender.sendMessage("§c/" + "WordBubbles" + " version§r - Shows the Plugin Version Number");
-	              sender.sendMessage("§c/" + "WordBubbles" + " reload§r - Reloads the Plugin Config");
-	            }
-	            sender.sendMessage(ChatColor.BLUE + "---------------------------------" + ChatColor.RESET);
+	            displayHelp(sender);
 	            return true;
 	          }
 	          
@@ -76,8 +45,9 @@ public class WordCommandExecutor implements org.bukkit.command.CommandExecutor
 	              sender.sendMessage(perm);
 	              return true;
 	            }
-	            plugin.wordconfig.initializeConfig();
-	            sender.sendMessage(plugin.wordconfig.PLPrefix + " §aReloaded");
+	            this.word.getPluginLoader().disablePlugin(this.word);
+	            this.word.getPluginLoader().enablePlugin(this.word);
+	            sender.sendMessage(this.word.wordconfig.PLPrefix + " §aReloaded");
 	            return true;
 	          }
 	          
@@ -87,33 +57,87 @@ public class WordCommandExecutor implements org.bukkit.command.CommandExecutor
 	              return true;
 	            }
 	            if (!(sender instanceof Player)) {
-	              Bukkit.getServer().getConsoleSender().sendMessage(plugin.wordconfig.PLPrefix + WordClass.plugin.getDescription().getVersion());
+	              Bukkit.getServer().getConsoleSender().sendMessage(this.word.wordconfig.PLPrefix + WordMain.plugin.getDescription().getVersion());
 	              return true;
 	            }
-	            sender.sendMessage(plugin.wordconfig.PLPrefix + ChatColor.LIGHT_PURPLE + "Version" + ChatColor.GRAY + ": " + ChatColor.RESET + WordClass.plugin.getDescription().getVersion());
+	            sender.sendMessage(this.word.wordconfig.PLPrefix + ChatColor.LIGHT_PURPLE + "Version" + ChatColor.GRAY + ": " + ChatColor.RESET + WordMain.plugin.getDescription().getVersion());
 	            return true;
 	          }
 	          
 
 	          if (arg.equalsIgnoreCase("toggle")) {
-	            if ((!sender.hasPermission("Wordbubbles.use")) && (!sender.hasPermission("Wordbubbles.admin"))) {
+	            if ((!sender.hasPermission("Wordbubbles.toggle")) && (!sender.hasPermission("Wordbubbles.admin"))) {
 	              sender.sendMessage(perm);
 	              return true;
 	            }
 	            if (!(sender instanceof Player)) {
-	              sender.sendMessage(plugin.wordconfig.PLPrefix + " Youre not a player! You can't toggle your WordBubbles!");
+	              sender.sendMessage(this.word.wordconfig.PLPrefix + " Youre not a player! You can't toggle your WordBubbles!");
 	              return true;
 	            }
 	            Player p = (Player)sender;
-	            if (!plugin.wordconfig.disabledPlayers.contains(p.getUniqueId().toString())) {
-	              p.sendMessage(plugin.wordconfig.PLPrefix + " " + "§fWordBubbles" + " §4Disabled");
-	              plugin.wordconfig.disabledPlayers.add(p.getUniqueId().toString());
+	            if (!this.word.wordconfig.disabledPlayers.contains(p.getUniqueId().toString())) {
+	              p.sendMessage(this.word.wordconfig.PLPrefix + " " + "§fWordBubbles" + " §4Disabled");
+	              this.word.wordconfig.disabledPlayers.add(p.getUniqueId().toString());
 	            } else {
-	              p.sendMessage(plugin.wordconfig.PLPrefix + " " + "§fWordBubbles" + " §2Enabled");
-	              plugin.wordconfig.disabledPlayers.remove(p.getUniqueId().toString());
+	              p.sendMessage(this.word.wordconfig.PLPrefix + " " + "§fWordBubbles" + " §2Enabled");
+	              this.word.wordconfig.disabledPlayers.remove(p.getUniqueId().toString());
 	            }
 	            return true;
 	          }
+	          
+	          if (arg.equalsIgnoreCase("nochat")) {
+		            if ((!sender.hasPermission("Wordbubbles.nochat")) && (!sender.hasPermission("Wordbubbles.admin"))) {
+		              sender.sendMessage(perm);
+		              return true;
+		            }
+		            if (!(sender instanceof Player)) {
+		              sender.sendMessage(this.word.wordconfig.PLPrefix + " Youre not a player! You can't toggle your MC Chat!");
+		              return true;
+		            }
+		            Player p = (Player)sender;
+		            if (!this.word.wordconfig.disabledPlayersChat.contains(p.getUniqueId().toString())) {
+		              p.sendMessage(this.word.wordconfig.PLPrefix + " " + "§fMC Chat" + " §4Disabled");
+		              this.word.wordconfig.disabledPlayersChat.add(p.getUniqueId().toString());
+		              if(this.word.wordconfig.disabledPlayers.contains(p.getUniqueId().toString())){
+		            	  this.word.wordconfig.disabledPlayers.remove(p.getUniqueId().toString());
+		            	  p.sendMessage(this.word.wordconfig.PLPrefix + " " + "§fWordBubbles" + " §cForce §2Enabled");
+		              }
+		            } else {
+		              p.sendMessage(this.word.wordconfig.PLPrefix + " " + "§fMC Chat" + " §2Enabled");
+		              this.word.wordconfig.disabledPlayersChat.remove(p.getUniqueId().toString());
+		            }
+		            return true;
+		          }
+	          
+	          if (arg.equalsIgnoreCase("nonpcchat")) {
+		            if ((!sender.hasPermission("Wordbubbles.trait")) && (!sender.hasPermission("Wordbubbles.admin"))) {
+		              sender.sendMessage(perm);
+		              return true;
+		            }
+		            if (!(sender instanceof Player)) {
+		              sender.sendMessage(this.word.wordconfig.PLPrefix + " Youre not a player! You can't toggle this NPC''s MC Chat!");
+		              return true;
+		            }
+		            Player p = (Player)sender;
+		            NPC selected = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
+		            if(selected!=null){
+		            	if(selected.hasTrait(me.drkmatr1984.wordbubbles.WordBubblesTrait.class)){
+			            	String NPCname = selected.getName();
+			                if (!this.word.wordconfig.disabledNPCs.contains(selected.getUniqueId().toString())) {
+			                  p.sendMessage(this.word.wordconfig.PLPrefix + " " + "§fMC Chat for " + ChatColor.GREEN + NPCname + " §4Disabled");
+			                  this.word.wordconfig.disabledNPCs.add(selected.getUniqueId().toString());
+			                } else {
+			                  p.sendMessage(this.word.wordconfig.PLPrefix + " " + "§fMC Chat for " + ChatColor.GREEN + NPCname + " §2Enabled");
+			                  this.word.wordconfig.disabledNPCs.remove(selected.getUniqueId().toString());
+			                }
+		                }else{
+		                	sender.sendMessage(this.word.wordconfig.PLPrefix + " Selected NPC is not able to use WordBubbles.");
+		                }
+		            }else{
+		            	sender.sendMessage(this.word.wordconfig.PLPrefix + " You do not have an NPC selected!");
+		            }
+		            return true;
+		          }
 	        }
 	      }
 	    }
@@ -121,5 +145,31 @@ public class WordCommandExecutor implements org.bukkit.command.CommandExecutor
 	      sender.sendMessage(ChatColor.DARK_RED + "An Error has Occured");
 	    }
 	    return false;
+	  }
+	  
+	  public void displayHelp(CommandSender sender){
+		  sender.sendMessage(ChatColor.BLUE + "------  " + ChatColor.YELLOW + this.word.wordconfig.PLPrefix + " Help  " + ChatColor.BLUE + "------" + ChatColor.RESET);
+          sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles" + " " + ChatColor.RESET + "- Displays this Help");
+          sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles help" + " " + ChatColor.RESET + "- Also Displays this Help");
+          if(sender.hasPermission("Wordbubbles.toggle") || sender.hasPermission("Wordbubbles.admin"))
+            	sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles toggle" + " " + ChatColor.RESET + "- Toggle your wordbubbles " + ChatColor.GREEN + "On" + ChatColor.RESET + "/" + ChatColor.RED + "Off" + ChatColor.RESET);
+            if(sender.hasPermission("Wordbubbles.nochat") || sender.hasPermission("Wordbubbles.admin"))	
+            	sender.sendMessage(ChatColor.AQUA + "/" + "WordBubbles nochat" + " " + ChatColor.RESET + "- Toggle your Chat " + ChatColor.GREEN + "On" + ChatColor.RESET + "/" + ChatColor.RED + "Off" + ChatColor.RESET + " (Only speak in WordBubbles)");
+          if(this.word.cit && (sender.hasPermission("Wordbubbles.trait") || sender.hasPermission("Wordbubbles.admin"))){
+        	sender.sendMessage(ChatColor.DARK_AQUA + "--------" + ChatColor.YELLOW + " NPC Help " + ChatColor.DARK_AQUA + "--------" + ChatColor.RESET);
+        	sender.sendMessage(ChatColor.YELLOW + "/Trait wordbubbles " + ChatColor.RESET + "- Typing this while");
+            sender.sendMessage("having a Citizens2 NPC selected will");
+            sender.sendMessage("allow the NPC to speak in wordbubbles");
+            sender.sendMessage(ChatColor.YELLOW + "/Wordbubbles noNPCchat" + ChatColor.RESET + "- Typing this while");
+            sender.sendMessage("having a Citizens2 NPC selected");
+            sender.sendMessage("will toggle text chat on/off for that");
+            sender.sendMessage("Particular Citizens2 NPC");
+          }
+          if (sender.hasPermission("Wordbubbles.admin")) {
+        	sender.sendMessage(ChatColor.YELLOW + "--------" + ChatColor.RED + " Admin Help " + ChatColor.YELLOW + "--------" + ChatColor.RESET);
+            sender.sendMessage("§c/" + "WordBubbles" + " version§r - Shows the Plugin Version Number");
+            sender.sendMessage("§c/" + "WordBubbles" + " reload§r - Reloads the Plugin Config");
+          }
+          sender.sendMessage(ChatColor.BLUE + "---------------------------------" + ChatColor.RESET);
 	  }
 }

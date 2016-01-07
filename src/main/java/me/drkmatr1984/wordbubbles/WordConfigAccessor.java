@@ -11,84 +11,71 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class WordConfigAccessor{
 	
-	  String PLPrefix = "";
-	  boolean bubblesEnabled = true;
-	  public boolean cancelNPCChat = false;
-	  double hight = 1.5D;
-	  String headerColor = "&6&l";
-	  String header = "-";
-	  public long updateTimer = 0L;
-	  boolean increaseTime = true;
-	  int increaseBy = 3;
-	  int timeout = 4;
-	  int maxLength = 4;
-	  String msgColor = "-";
-	  boolean smileys = true;
-	  boolean cancelChat = false;
-	  public ChatColor currentColor = ChatColor.WHITE;
-	  private File usersFile;
-	  private FileConfiguration users;
-	  private WordClass plugin;
-	  ArrayList<String> disabledWorlds = new ArrayList<String>();
-	  List<String> disabledPlayers = new ArrayList<String>();
+	WordMain word = WordMain.getWordClass();
+	String PLPrefix = "";
+	boolean bubblesEnabled = true;
+	public boolean cancelNPCChat = false;
+	double height = 1.5D;
+	String headerColor = "&6&l";
+	String header = "-";
+	String NPCheaderColor = "&6&l";
+	String NPCheader = "-";
+	public long updateTimer = 0L;
+	boolean increaseTime = true;
+	int increaseBy = 3;
+	int timeout = 4;
+	int maxLength = 4;
+	String msgColor = "-";
+	boolean cancelChat = false;
+	public ChatColor currentColor = ChatColor.WHITE;
+	File fc = new File(this.word.getDataFolder().toString()+"/data");
+	private File usersFile = new File(fc, "toggles.yml");
+	private FileConfiguration users;
+	List<String> disabledWorlds = new ArrayList<String>();
+	List<String> disabledPlayers = new ArrayList<String>();
+	List<String> disabledPlayersChat = new ArrayList<String>();
+	List<String> disabledNPCs = new ArrayList<String>();
 	
-    public WordConfigAccessor(WordClass plugin) {
-	    this.plugin = plugin;
-    }
 	public void initializeConfig() {
-	    FileConfiguration f = plugin.getConfig();
-	    f.addDefault("EnableWordBubbles", Boolean.valueOf(true));
-	    f.addDefault("ChatPrefix", "&7[&4WordBubbles&7]&r");
-	    f.addDefault("Header", "&6[&4%HEALTH&6] &6[&a%NAME&6] &6[&d%LVL&6]");
-	    f.addDefault("HeaderColor", "&6&l");
-	    f.addDefault("MsgColor", "&b");
-	    f.addDefault("Height", Double.valueOf(1.5D));
-	    f.addDefault("TimeTilFade", Integer.valueOf(4));
-	    f.addDefault("IncreaseTimeIfMessageLong", Boolean.valueOf(true));
-	    f.addDefault("IncreaseBy", Integer.valueOf(3));
-	    f.addDefault("MaxLength", Integer.valueOf(50));
-	    f.addDefault("RefreshTimer", Integer.valueOf(0));
-	    f.addDefault("Smileys", Boolean.valueOf(true));
-	    f.addDefault("CancelChat", Boolean.valueOf(false));
-	    f.addDefault("CancelNPCChat", Boolean.valueOf(false));
-	    ArrayList<String> TEMP = (ArrayList<String>)f.getStringList("DisabledWorlds");
-	    if ((TEMP == null) || (TEMP.size() == 0)) {
-	      TEMP.add("world_1");
-	    }
-	    f.set("DisabledWorlds", TEMP);
-	    f.options().copyDefaults(true);
-	    plugin.saveConfig();
-	    this.bubblesEnabled = f.getBoolean("EnableWordBubbles");
-	    String reformatPlPrefix = f.getString("ChatPrefix");
+		File file = new File(this.word.getDataFolder(), "config.yml");
+	       if(!file.exists()) {
+	           this.word.saveDefaultConfig();
+	       }
+	    FileConfiguration f = YamlConfiguration.loadConfiguration(file);
+	    this.bubblesEnabled = f.getBoolean("General.EnableWordBubbles");
+	    String reformatPlPrefix = f.getString("General.ChatPrefix");
 	    reformatPlPrefix = reformatPlPrefix.replaceAll("&", "§");
 	    this.PLPrefix = reformatPlPrefix;
-	    this.hight = f.getDouble("Height");
-	    this.updateTimer = f.getLong("RefreshTimer");
-	    this.increaseTime = f.getBoolean("IncreaseTimeIfMessageLong");
-	    this.increaseBy = f.getInt("IncreaseBy");
-	    this.timeout = f.getInt("TimeTilFade");
-	    this.maxLength = f.getInt("MaxLength");
-	    this.header = f.getString("Header");
-	    this.headerColor = f.getString("HeaderColor");
-	    this.msgColor = f.getString("MsgColor");
-	    this.disabledWorlds = TEMP;
-	    this.smileys = f.getBoolean("Smileys");
-	    this.cancelChat = f.getBoolean("CancelChat");
-	    this.cancelNPCChat = f.getBoolean("CancelNPCChat");
-	  }
-
-	  public void saveDefaultUserList() {
-	      if (usersFile == null) {
-	          usersFile = new File(plugin.getDataFolder(), "toggles.yml");
-	      }
-	      if (!usersFile.exists()) {           
-	          plugin.saveResource("toggles.yml", false);
-	      }   
+	    this.height = f.getDouble("General.Height");
+	    this.updateTimer = f.getLong("General.RefreshTimer");
+	    this.increaseTime = f.getBoolean("General.IncreaseTimeIfMessageLong");
+	    this.increaseBy = f.getInt("General.IncreaseBy");
+	    this.timeout = f.getInt("General.TimeTilFade");
+	    this.maxLength = f.getInt("General.MaxLength");
+	    this.header = f.getString("General.Header");
+	    this.headerColor = f.getString("General.HeaderColor");
+	    this.msgColor = f.getString("General.MsgColor");
+	    this.cancelChat = f.getBoolean("General.CancelChat");
+	    this.disabledWorlds = f.getStringList("General.DisabledWorlds");
+	    if(this.word.cit){
+	        this.NPCheader = f.getString("CitizenNPCs.NPCHeader");
+	        this.NPCheaderColor = f.getString("CitizenNPCs.NPCHeaderColor");
+	        this.cancelNPCChat = f.getBoolean("CitizenNPCs.CancelNPCChat");
+	    }
+	    loadUserList();
 	  }
 	  
 	  public void loadUserList(){
+		  if (!fc.exists()){
+			  fc.mkdir();
+	      }
+	      if (!usersFile.exists()) { 
+	    	  this.word.saveResource("data/toggles.yml", true);
+	      }
 		  users = YamlConfiguration.loadConfiguration(usersFile);
-		  disabledPlayers = users.getStringList("DisabledPlayers");     
+		  disabledPlayers = users.getStringList("DisabledPlayers");
+		  disabledNPCs = users.getStringList("DisabledNPCs");
+		  disabledPlayersChat = users.getStringList("DisabledPlayersChat");
 	  }
 	  
 	  public void saveUserList(){
@@ -96,6 +83,17 @@ public class WordConfigAccessor{
 		  {
 			  users.set("DisabledPlayers",disabledPlayers);
 		  }
+		  if(disabledPlayersChat!=null)
+		  {
+			  users.set("DisabledPlayersChat",disabledPlayersChat);
+		  }
+		  if(disabledNPCs!=null)
+		  {
+			  users.set("DisabledNPCs",disabledNPCs);
+		  }
+		  if (!fc.exists()){
+			  fc.mkdir();
+	      }
 		  if(usersFile.exists())
 			  usersFile.delete();
 		  try {
@@ -104,12 +102,15 @@ public class WordConfigAccessor{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		  }
-		  try {
-			usersFile.createNewFile();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		  if (!usersFile.exists()){
+			  try {
+				usersFile.createNewFile();
+			  } catch (IOException e) {
+				// TODO Auto-generated catch block
+				
+				e.printStackTrace();
+			  }
+	     }
 	  }
 	  
 	  public void repairDisabledWorldsList()

@@ -81,6 +81,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/DeluxeChat.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>net.flamm3blemuff1n</groupId>
+            <artifactId>SmileyChat</artifactId>
+            <version>3.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/SmileyChat.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <!-- Build information -->

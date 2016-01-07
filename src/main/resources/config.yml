@@ -1,0 +1,23 @@
+## WordBubbles Config File ##
+General:
+  EnableWordBubbles: true    ## !GLOBAL! Will override player toggles!
+  ChatPrefix: '&7[&4WordBubbles&7]&r'
+  Header: '&6[&4%HEALTH&6] &6[&a%DNAME&6] &6[&d%LVL&6]'
+  HeaderColor: '&6&l'
+  MsgColor: '&b'
+  Height: 1.5
+  TimeTilFade: 4
+  IncreaseTimeIfMessageLong: true
+  IncreaseBy: 3
+  MaxLength: 50
+  RefreshTimer: 0
+  Smileys: true
+  CancelChat: false          ## !GLOBAL! Will override player toggles!
+                             ## Cancel normal chat, speak only in wordbubbles
+  DisabledWorlds:
+  - world_1
+CitizenNPCs:
+  NPCHeader: '&6[&a%DNAME&6]'
+  NPCHeaderColor: '&6&l'
+  CancelNPCChat: false       ## !GLOBAL! Will override player toggles!
+                             ## cancel normal chat for NPCs, they speak only in wordbubbles

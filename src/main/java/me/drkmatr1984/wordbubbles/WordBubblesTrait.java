@@ -12,9 +12,7 @@ import org.bukkit.event.EventPriority;
 public class WordBubblesTrait
   extends Trait
 {
-  WordClass word = WordClass.getWordClass();
-  WordConfigAccessor wordconfig;
-  private WordClass plugin;
+  WordMain word = WordMain.getWordClass();
   
   public WordBubblesTrait() {
     super("wordbubbles");
@@ -22,7 +20,6 @@ public class WordBubblesTrait
   
   @EventHandler(priority=EventPriority.HIGHEST)
   public void onNPCSpeech(NPCSpeechEvent event) {
-	this.plugin = WordClass.getWordClass();
     if (this.npc != event.getNPC()) return;
     if ((event.getNPC() != null) && (event.getNPC().isSpawned())) {
       NPC talker = event.getNPC();
@@ -31,11 +28,13 @@ public class WordBubblesTrait
         SpeechContext sp = event.getContext();
         String msg = sp.getMessage();
         LivingEntity p = (LivingEntity)talker.getEntity();
-        WordBubblesAPI.createWordBubbleAPI(talker, this.word.formatHeader(p, plugin.wordconfig.header), this.word.formatMsg(p, Arrays.asList(new String[] { msg })));
-        if (plugin.wordconfig.cancelNPCChat) {
+        WordBubblesAPI.createWordBubbleAPI(talker, this.word.wordbubbles.formatHeader(p, this.word.wordconfig.NPCheader), this.word.wordbubbles.formatMsg(p, Arrays.asList(new String[] { msg })));
+        if (this.word.wordconfig.cancelNPCChat || this.word.wordconfig.disabledNPCs.contains(talker.getUniqueId().toString())) {
           event.setCancelled(true);
         }
       }
     }
   }
+  
+  
 }
