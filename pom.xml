@@ -30,6 +30,11 @@
             <id>citizens-repo</id>
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
+        <repository>
+            <id>mvdw-software</id>
+            <name>MVdW Public Repositories</name>
+            <url>http://repo.mvdw-software.be/content/groups/public/</url>
+        </repository>
     </repositories>
     <!-- Dependencies -->
     <dependencies>
@@ -75,18 +80,9 @@
             <systemPath>${project.basedir}/lib/PlaceholderAPI.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>deluxechat</artifactId>
-            <version>1.6.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/DeluxeChat.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>net.flamm3blemuff1n</groupId>
-            <artifactId>SmileyChat</artifactId>
-            <version>3.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/SmileyChat.jar</systemPath>
+            <groupId>be.maximvdw</groupId>
+            <artifactId>MVdWPlaceholderAPI</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

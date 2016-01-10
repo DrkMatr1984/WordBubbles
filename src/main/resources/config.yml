@@ -1,7 +1,6 @@
 ## WordBubbles Config File ##
 General:
   EnableWordBubbles: true    ## !GLOBAL! Will override player toggles!
-  ChatPrefix: '&7[&4WordBubbles&7]&r'
   Header: '&6[&4%HEALTH&6] &6[&a%DNAME&6] &6[&d%LVL&6]'
   HeaderColor: '&6&l'
   MsgColor: '&b'

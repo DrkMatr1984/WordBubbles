@@ -12,7 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class WordConfigAccessor{
 	
 	WordMain word = WordMain.getWordClass();
-	String PLPrefix = "";
+	
 	boolean bubblesEnabled = true;
 	public boolean cancelNPCChat = false;
 	double height = 1.5D;
@@ -43,9 +43,6 @@ public class WordConfigAccessor{
 	       }
 	    FileConfiguration f = YamlConfiguration.loadConfiguration(file);
 	    this.bubblesEnabled = f.getBoolean("General.EnableWordBubbles");
-	    String reformatPlPrefix = f.getString("General.ChatPrefix");
-	    reformatPlPrefix = reformatPlPrefix.replaceAll("&", "§");
-	    this.PLPrefix = reformatPlPrefix;
 	    this.height = f.getDouble("General.Height");
 	    this.updateTimer = f.getLong("General.RefreshTimer");
 	    this.increaseTime = f.getBoolean("General.IncreaseTimeIfMessageLong");

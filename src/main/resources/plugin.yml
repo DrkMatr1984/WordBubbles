@@ -22,7 +22,15 @@ commands:
   Trait WordBubbles:
     description: Allow NPC to Speak with WordBubbles 
     usage: |
-        /Trait wordbubbles - Allow NPC to Speak with WordBubbles 
+        /Trait wordbubbles - Allow NPC to Speak with WordBubbles
+  WordBubbles reload:
+    description: Reload the plugin to grab config changes 
+    usage: |
+        /Wordbubbles reload - Reload the plugin to grab config changes
+  WordBubbles version:
+    description: Gives the current Plugin Version 
+    usage: |
+        /Wordbubbles version - Gives the current Plugin Version 
 permissions:
     Wordbubbles.use:
         description: The player will generate wordbubbles and can use WordBubbles Commmands

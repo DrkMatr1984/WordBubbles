@@ -1,0 +1,11 @@
+## WordBubbles Language File ##
+General:
+  ChatPrefix: "&7[&4WordBubbles&7]&r"
+  BubblesName: '&fWordBubbles&r' 
+  NoPerms: "&cYou don't have Permission&r"
+  Reloaded: '&aReloaded&r'
+  NotaPlayerToggle: "Youre not a player! You can't toggle your WordBubbles!"
+  NotaPlayerMCChat: "Youre not a player! You can't toggle your MC Chat!"
+  Enabled: '&2Enabled&r'
+  Disabled: '&4Disabled&r'
+Help:
